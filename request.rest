@@ -1,0 +1,7 @@
+POST  http://localhost:8080/user/login
+
+###
+POST http://localhost:8080/user/register
+
+###
+POST http://localhost:8080/user/tokenValidate
