@@ -18,11 +18,13 @@ exports.login = async (req, res) => {
     const realPassword = await bcrypt.compare('' + password, isExists.password);
     console.log(realPassword);
     if (isExists.email === email && realPassword) {
+      const refreshToken = jwt.sign(req.body, REFRESH_ACCESS_TOKEN_SECRET);
+      REFRESHTOKENS.push(refreshToken);
       res.status(200).send({
         accessToken: jwt.sign(req.body, ACCESS_TOKEN_SECRET, {
           expiresIn: '10s',
         }),
-        refreshToken: jwt.sign(req.body, REFRESH_ACCESS_TOKEN_SECRET),
+        refreshToken: refreshToken,
         email: email,
         name: isExists.name,
         isAdmin: isAdmin,
