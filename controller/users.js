@@ -100,9 +100,11 @@ exports.getNewToken = (req, res) => {
       if (err) {
         throw err;
       }
-      const newAccessToken = jwt.sign(user, ACCESS_TOKEN_SECRET, {
-        expiresIn: '10s',
-      });
+      const newAccessToken = jwt.sign(
+        { email: user.email },
+        ACCESS_TOKEN_SECRET,
+        { expiresIn: '10s' }
+      );
       console.log(newAccessToken);
       res.status(200).send({ accessToken: newAccessToken });
       return;

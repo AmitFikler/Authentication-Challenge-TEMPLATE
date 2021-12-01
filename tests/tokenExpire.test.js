@@ -59,7 +59,7 @@ describe('Token expiration and refresh test', () => {
     const infoRes2 = await request(server)
       .get('/api/v1/information')
       .set('authorization', `bearer ${data.body.accessToken}`);
-    // console.log(infoRes2);
+    console.log(data.body.accessToken);
 
     expect(infoRes2.status).toBe(200);
     expect(infoRes2.body.length > 0).toBe(true);
