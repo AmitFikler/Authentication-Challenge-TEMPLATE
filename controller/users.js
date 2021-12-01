@@ -48,13 +48,22 @@ exports.register = async (req, res) => {
 };
 
 exports.tokenValidate = (req, res) => {
-  console.log(
-    verifyToken(
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVC9.eyJlbWFpbCI6ImFtaXRAZ21haWwuY29tIiwicGFzc3dvcmQiOjEyMzQsImlhdCI6MTYzODM1NDk5N30.Q8rdkKiGlMALkvRlBizcSwdSmhRETk4Iq8YF_cLtPCU',
-      REFRESH_ACCESS_TOKEN_SECRET
-    )
-  );
-  res.send('hello');
+  try {
+    const tokenWithBearer = req.headers['authorization'];
+    if (!tokenWithBearer) {
+      res.status(401).send('Access Token Required');
+      return;
+    }
+    const token = tokenWithBearer.split(' ')[1];
+    const valid = verifyToken(token, ACCESS_TOKEN_SECRET);
+    if (valid) {
+      res.status(200).send({ valid: true });
+      return;
+    }
+  } catch (error) {
+    console.log(error);
+    res.status(403).send('Invalid Access Token');
+  }
 };
 
 exports.logout = (req, res) => {
