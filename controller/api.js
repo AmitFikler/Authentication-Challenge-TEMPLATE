@@ -24,25 +24,21 @@ exports.getInformation = (req, res) => {
 };
 
 exports.getUsers = (req, res) => {
-  try {
-    const tokenWithBearer = req.headers['authorization'];
-    if (!tokenWithBearer) {
-      res.status(401).send('Access Token Required');
-      return;
-    }
-    const token = tokenWithBearer.split(' ')[1];
-    jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
-      if (err) {
-        throw err;
-      }
-      if (user.isAdmin === true) {
-        res.status(200).send(USERS);
-        return;
-      } else {
-        throw err;
-      }
-    });
-  } catch (error) {
-    res.status(403).send('Invalid Access Token');
+  const tokenWithBearer = req.headers['authorization'];
+  if (!tokenWithBearer) {
+    res.status(401).send('Access Token Required');
+    return;
   }
+  const token = tokenWithBearer.split(' ')[1];
+  jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
+    if (err) {
+      return res.status(403).send('Invalid Access Token');
+    }
+    const findAdmin = USERS.find((users) => users.email === user.email);
+    if (findAdmin.isAdmin) {
+      return res.status(200).send(USERS);
+    } else {
+      return res.status(403).send('Invalid Access Token');
+    }
+  });
 };
