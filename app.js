@@ -9,6 +9,6 @@ app.use(morgan('dev'));
 app.use(express.json());
 // app.use(express.urlencoded({ extended: true }));
 
-app.use('/user', userRouter);
+app.use('/users', userRouter);
 
 module.exports = app;
