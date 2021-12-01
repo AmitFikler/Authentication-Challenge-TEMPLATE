@@ -11,7 +11,6 @@ exports.getInformation = (req, res) => {
   const token = tokenWithBearer.split(' ')[1];
   jwt.verify(token, ACCESS_TOKEN_SECRET, (err, user) => {
     if (err) {
-      console.log(err);
       return res.status(403).send('Invalid Access Token');
     }
     const userInfo = INFORMATION.find(
