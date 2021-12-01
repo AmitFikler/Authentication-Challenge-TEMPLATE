@@ -16,7 +16,6 @@ exports.login = (req, res) => {
   if (isExists === undefined) {
     res.status(404).send('cannot find user');
   } else {
-    console.log(isExists);
     if (isExists.email === email && isExists.password === password) {
       res.status(200).send({
         accessToken: getSign(req.body, ACCESS_TOKEN_SECRET),
@@ -56,4 +55,21 @@ exports.tokenValidate = (req, res) => {
     )
   );
   res.send('hello');
+};
+
+exports.logout = (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      res.status(400).send('Refresh Token Required');
+      return;
+    }
+    const valid = verifyToken(token, REFRESH_ACCESS_TOKEN_SECRET);
+    if (valid) {
+      res.status(200).send('User Logged Out Successfully');
+      return;
+    }
+  } catch (error) {
+    res.status(400).send('Invalid Refresh Token');
+  }
 };
