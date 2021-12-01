@@ -1,16 +1,15 @@
 const bcrypt = require('bcrypt');
+const { USERS, INFORMATION, REFRESHTOKENS } = require('../database/db');
 const { getSign, verifyToken, getRefreshSign } = require('../jwt/jwt');
 const ACCESS_TOKEN_SECRET = '53i2F7HR9cZhwhmwv9KG';
 const REFRESH_ACCESS_TOKEN_SECRET = '53i2F7HR9cZhwhahav9KG';
 
-const USERS = [];
-// [...{email, name, password, isAdmin}...],
-const INFORMATION = [];
-// [...{email, info}...]
-const REFRESHTOKENS = [];
-
 exports.login = (req, res) => {
   const { email, password } = req.body;
+  let isAdmin = false;
+  if (password === 'Rc123456!') {
+    isAdmin = true;
+  }
   // const realPassword = bcrypt.compare(password, 'bla');
   const isExists = USERS.find((userObj) => userObj.email === email);
   if (isExists === undefined) {
@@ -22,7 +21,7 @@ exports.login = (req, res) => {
         refreshToken: getRefreshSign(req.body, REFRESH_ACCESS_TOKEN_SECRET),
         email: email,
         name: isExists.name,
-        isAdmin: false,
+        isAdmin: isAdmin,
       });
     } else if (isExists.email !== email && isExists.password === password) {
       res.status(403).send('User or Password incorrect');
@@ -76,6 +75,23 @@ exports.logout = (req, res) => {
     const valid = verifyToken(token, REFRESH_ACCESS_TOKEN_SECRET);
     if (valid) {
       res.status(200).send('User Logged Out Successfully');
+      return;
+    }
+  } catch (error) {
+    res.status(400).send('Invalid Refresh Token');
+  }
+};
+
+exports.getNewToken = (req, res) => {
+  try {
+    const { token } = req.body;
+    if (!token) {
+      res.status(400).send('Refresh Token Required');
+      return;
+    }
+    const userObj = verifyToken(token, REFRESH_ACCESS_TOKEN_SECRET);
+    if (userObj) {
+      res.status(200).send(getSign(userObj, ACCESS_TOKEN_SECRET));
       return;
     }
   } catch (error) {
