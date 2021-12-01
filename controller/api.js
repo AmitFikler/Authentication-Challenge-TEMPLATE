@@ -1,7 +1,6 @@
 const { USERS, INFORMATION, REFRESHTOKENS } = require('../database/db');
 const ACCESS_TOKEN_SECRET = '53i2F7HR9cZhwhmwv9KG';
 const jwt = require('jsonwebtoken');
-const REFRESH_ACCESS_TOKEN_SECRET = '53i2F7HR9cZhwhahav9KG';
 
 exports.getInformation = (req, res) => {
   const tokenWithBearer = req.headers['authorization'];
